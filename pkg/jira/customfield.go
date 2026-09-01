@@ -1,5 +1,7 @@
 package jira
 
+import "strings"
+
 const (
 	customFieldFormatOption  = "option"
 	customFieldFormatArray   = "array"
@@ -38,4 +40,32 @@ type customFieldTypeProject struct {
 
 type customFieldTypeProjectSet struct {
 	Set customFieldTypeProject `json:"set"`
+}
+
+// splitCustomArray splits a multi-value custom-field input on unescaped commas.
+// A comma escaped as `\,` is treated as a literal comma within a single value,
+// which lets a single option value legitimately contain a comma
+// (e.g. `Matching (CAI\, other)` -> one value `Matching (CAI, other)`).
+// Each resulting value is trimmed of surrounding whitespace.
+func splitCustomArray(val string) []string {
+	var (
+		out []string
+		cur strings.Builder
+	)
+	for i := 0; i < len(val); i++ {
+		if val[i] == '\\' && i+1 < len(val) && val[i+1] == ',' {
+			cur.WriteByte(',')
+			i++
+			continue
+		}
+		if val[i] == ',' {
+			out = append(out, strings.TrimSpace(cur.String()))
+			cur.Reset()
+			continue
+		}
+		cur.WriteByte(val[i])
+	}
+	out = append(out, strings.TrimSpace(cur.String()))
+
+	return out
 }

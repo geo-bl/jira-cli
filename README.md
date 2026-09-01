@@ -322,6 +322,8 @@ $  jira issue create -tStory -s"Epic during creation" -PEPIC-42
 
 You can use a `--custom` flag to set custom fields while creating the issue. See [this post](https://github.com/ankitpokhrel/jira-cli/discussions/346) for more details.
 
+For multi-value (array) custom fields, values are separated by commas, e.g. `--custom sprint=1,2,3`. If a single value itself contains a comma, escape it with a backslash so it isn't split into multiple values, e.g. `--custom 'bl-product=Matching (CAI\, other)'` sets a single option `Matching (CAI, other)`.
+
 The command supports both [GitHub-flavored](https://github.github.com/gfm/)
 and [Jira-flavored](https://jira.atlassian.com/secure/WikiRendererHelpAction.jspa?section=all) Markdown for writing
 description. You can load pre-defined templates using `--template` flag.
